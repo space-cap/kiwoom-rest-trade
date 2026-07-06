@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: pypi
     permissions:
       # Trusted Publishing (OIDC) 인증을 위한 토큰 권한 설정
       id-token: write
