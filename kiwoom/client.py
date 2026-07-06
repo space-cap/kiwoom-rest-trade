@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any
+from typing import Any, Coroutine, cast
 
 from kiwoom.api.auth import AuthAPI
 from kiwoom.api.domestic import DomesticAPI
@@ -45,7 +45,7 @@ class SyncAPIProxy:
         if callable(async_attr):
 
             def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
-                coro = async_attr(*args, **kwargs)
+                coro = cast(Coroutine[Any, Any, Any], async_attr(*args, **kwargs))
                 if self._loop.is_running():
                     # Jupyter Notebook 등 이미 이벤트 루프가 돌고 있는 환경에서의 대응
                     future = asyncio.run_coroutine_threadsafe(coro, self._loop)
