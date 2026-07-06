@@ -46,6 +46,8 @@ htmlcov/
 # 4. 환경 변수 및 보안 키 파일 (사용자의 App Key 등 노출 방지)
 .env
 .env.*
+!.env.example
+!.env.sample
 secrets.json
 *.key
 
