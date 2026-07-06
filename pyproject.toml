@@ -40,6 +40,7 @@ select = [
     "B",   # flake8-bugbear (잠재적 버그)
     "RUF", # Ruff 고유 규칙
 ]
+ignore = ["E501"]  # 자동 생성된 모델 내 긴 한국어 설명글(Line too long) 검사 제외
 
 # Mypy 설정 (타입 체크)
 [tool.mypy]
