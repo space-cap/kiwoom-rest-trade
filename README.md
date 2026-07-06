@@ -25,7 +25,7 @@
 
 본 라이브러리는 키움증권 REST API의 총 **337개 엔드포인트**를 완벽하게 지원합니다. 각 키움 API ID에 1대1 매핑되는 파이썬 클라이언트 호출 경로와 상세 설명은 아래 링크된 가이드 문서에서 바로 찾아 복사해 사용하실 수 있습니다.
 
-👉 **[전체 337개 지원 API 목록 및 매핑 가이드 (docs/05_API_LIST.md)](docs/05_API_LIST.md)**
+👉 **[전체 337개 지원 API 목록 및 매핑 가이드](https://space-cap.github.io/kiwoom-rest-trade/05_API_LIST.html)**
 
 ---
 
