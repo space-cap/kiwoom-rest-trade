@@ -157,4 +157,31 @@ async def test_get_balance(mock_kiwoom_server):
     
     assert balance.acnt_no == "1234567890"
     assert balance.tot_evlu_amt > 0
+
+---
+
+## 6. 패키지 빌드 및 배포 방법 (Packaging & Publishing)
+
+본 라이브러리는 `uv`와 `hatchling` 빌드 백엔드를 표준으로 채택하고 있으므로, 빌드 및 PyPI 업로드 과정 또한 단순하고 직관적입니다.
+
+### 6.1. 배포 패키지 빌드 (Build)
+`pyproject.toml` 스펙에 따라 휠(whl)과 소스 배포판(tar.gz)을 컴파일 및 생성합니다.
+```bash
+# dist/ 폴더 하위에 빌드 아티팩트 생성
+uv build
+```
+
+### 6.2. PyPI 패키지 릴리즈 및 배포 (Publish)
+빌드된 패키지 파일을 PyPI(Python Package Index) 공식 저장소에 업로드(배포)합니다. 
+```bash
+# 공식 PyPI 배포 실행 (PyPI API Token 필요)
+uv publish
+```
+
+* 💡 **TestPyPI에 테스트 배포 해보기**:
+  실제 배포 전에 패키지 형식이 잘 맞는지 TestPyPI 임시 서버에 먼저 배포해 볼 수 있습니다.
+  ```bash
+  uv publish --publish-url https://test.pypi.org/legacy/
+  ```
+
 ```
