@@ -2,23 +2,27 @@ import asyncio
 import time
 from datetime import datetime
 from typing import Optional
+
 import httpx
+
 from kiwoom.exceptions import KiwoomAuthError
+
 
 class TokenManager:
     """
     키움증권 API 토큰의 수명(Expires)을 관리하고, 만료 임박 시 비동기 락을 이용하여
     안전하게 백그라운드 갱신을 담당하는 토큰 매니저 클래스입니다.
     """
+
     def __init__(self, appkey: str, secretkey: str, is_mock: bool = False) -> None:
         self.appkey = appkey
         self.secretkey = secretkey
         self.is_mock = is_mock
-        
+
         # 내부 토큰 정보 상태 캐시
         self._access_token: Optional[str] = None
         self._expires_at: float = 0.0
-        
+
         # 동시성 방지를 위한 비동기 락
         self._lock = asyncio.Lock()
 
@@ -48,37 +52,31 @@ class TokenManager:
 
             # 실제 갱신 프로세스 진행
             await self._refresh_token()
-            
+
             if not self._access_token:
                 raise KiwoomAuthError("접근 토큰 갱신에 실패하여 유효한 토큰을 획득할 수 없습니다.")
-                
+
             return self._access_token
 
     async def _refresh_token(self) -> None:
         """키움 OAuth 인증 서버에 토큰 발급을 비동기 요청합니다."""
         url = f"{self.base_url}/oauth2/token"
-        headers = {
-            "content-type": "application/json;charset=UTF-8",
-            "api-id": "au10001"
-        }
+        headers = {"content-type": "application/json;charset=UTF-8", "api-id": "au10001"}
         data = {
             "grant_type": "client_credentials",
             "appkey": self.appkey,
-            "secretkey": self.secretkey
+            "secretkey": self.secretkey,
         }
 
         async with httpx.AsyncClient(http2=True) as http_client:
             try:
-                response = await http_client.post(
-                    url,
-                    headers=headers,
-                    json=data,
-                    timeout=10.0
-                )
+                response = await http_client.post(url, headers=headers, json=data, timeout=10.0)
                 response.raise_for_status()
             except httpx.HTTPStatusError as e:
                 status_code = e.response.status_code
-                raise KiwoomAuthError(f"OAuth 서버가 HTTP 에러 코드를 반환했습니다. (상태 코드: {status_code})") from e
+                raise KiwoomAuthError(
+                    f"OAuth 서버가 HTTP 에러 코드를 반환했습니다. (상태 코드: {status_code})"
+                ) from e
             except httpx.RequestError as e:
                 raise KiwoomAuthError(f"OAuth 서버에 연결하지 못했습니다: {e}") from e
 
