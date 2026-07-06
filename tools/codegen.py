@@ -256,11 +256,12 @@ class {class_prefix}Response(KiwoomBaseModel):
                 models_code.append(resp_model)
 
                 # 3. API Method 생성
-                api_methods.append(f"""
+                api_methods.append(
+                    f"""
     async def {api_method_name}(self, request: {class_prefix}Request, headers: Optional[dict] = None) -> {class_prefix}Response:
         \"\"\"
         {name} ({api_id_raw})
-        
+
         URL: {url} ({method})
         \"\"\"
         response_json = await self._request(
@@ -271,7 +272,8 @@ class {class_prefix}Response(KiwoomBaseModel):
             json_data=request.model_dump(by_alias=True, exclude_none=True)
         )
         return {class_prefix}Response.model_validate(response_json)
-""")
+"""
+                )
 
             # 중첩 클래스 정의들을 최상위에 삽입 (정의가 선행되어야 메인 클래스에서 사용 가능하므로)
             if self.nested_models_buffer[cat_key]:
