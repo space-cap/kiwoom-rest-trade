@@ -1,81 +1,93 @@
 # 🛠️ kiwoom-rest-trade 개발 환경 설정 가이드 (DEVELOPMENT_ENV.md)
 
-본 문서는 `kiwoom-rest-trade` 라이브러리를 개발하기 위해 개발 환경을 구축하고, 정적 분석 및 테스트 도구를 설정하는 가이드입니다. 이 패키지는 최신 파이썬 패키징 표준 및 개발 툴체인을 따릅니다.
+본 문서는 `kiwoom-rest-trade` 라이브러리를 개발하기 위해 차세대 초고속 파이썬 패키지 매니저인 **`uv`**를 사용하여 개발 환경을 구축하고, 정적 분석 및 테스트 도구를 설정하는 가이드입니다.
 
 ---
 
 ## 1. 개발 도구 및 기술 스택
 
-* **Python**: `^3.10` (최신 비동기 문법 및 패턴 매칭 활용을 위해 Python 3.10 이상 권장)
-* **패키지 및 의존성 관리**: `Poetry` (의존성 잠금 및 PyPI 배포의 사실상 표준)
+* **Python**: `>=3.10` (최신 비동기 문법 및 패턴 매칭 활용을 위해 Python 3.10 이상 권장)
+* **패키지 및 의존성 관리**: `uv` (Rust 기반의 초고속 올인원 파이썬 패키지 및 프로젝트 매니저)
 * **린터 & 포맷터**: `Ruff` (매우 빠른 속도와 다양한 린트 룰셋 통합 제공)
 * **타입 체커**: `Mypy` (엄격한 타입 체크를 통한 버그 방지)
 * **테스트 도구**: `Pytest` + `pytest-asyncio` (비동기 유닛/통합 테스트 최적화)
 
 ---
 
-## 2. 프로젝트 초기화 및 가상환경 설정
+## 2. 프로젝트 초기화 및 가상환경 설정 (`uv` 기반)
 
-이 프로젝트는 `Poetry`를 사용하여 패키지를 구성합니다. 프로젝트 루트 디렉토리(`kiwoom-rest-trade`)에서 가상환경 및 의존성 설치를 진행합니다.
+`uv`는 파이썬 설치부터 가상환경 생성, 의존성 동기화까지 번개처럼 빠르게 처리합니다.
 
-### 2.1. Poetry 설치 (설치되어 있지 않은 경우)
+### 2.1. `uv` 설치 (설치되어 있지 않은 경우)
 ```bash
 # Windows (PowerShell)
-(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
+irm https://astral.sh/uv/install.ps1 | iex
 
 # Mac / Linux
-curl -sSL https://install.python-poetry.org | python3 -
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 2.2. 프로젝트 내 가상환경 설정 (`.venv` 활성화)
-Poetry가 가상환경을 프로젝트 내부 폴더(`.venv`)에 생성하도록 설정하여 VS Code 등 IDE와의 연동성을 높입니다.
+### 2.2. 파이썬 가상환경 생성 및 활성화
+`uv`를 사용하면 프로젝트 폴더에 바로 가상환경을 생성하고, 자동으로 파이썬 버전까지 다운로드하여 적용해 줍니다.
 ```bash
-poetry config virtualenvs.in-project true
+# 프로젝트 폴더 내부에 파이썬 3.10 기반 가상환경(.venv) 생성
+uv venv --python 3.10
+
+# 가상환경 활성화 (Windows PowerShell)
+.venv\Scripts\activate
+
+# 가상환경 활성화 (Mac / Linux)
+source .venv/bin/activate
 ```
 
-### 2.3. 의존성 설치
-개발용 패키지와 런타임 필수 패키지를 모두 설치합니다.
+### 2.3. 의존성 패키지 동기화 (설치)
+`uv.lock`과 `pyproject.toml`에 기재된 모든 개발/런타임 패키지를 초고속으로 설치합니다.
 ```bash
-poetry install
+uv sync
 ```
 
 ---
 
-## 3. pyproject.toml 기본 템플릿
+## 3. pyproject.toml 표준 템플릿 (PEP 621 준수)
 
-프로젝트의 빌드 정의, 의존성, 린터/포맷터 도구 설정을 일괄적으로 관리하는 `pyproject.toml` 설정 파일 가이드입니다.
+`uv`는 특정 도구 전용 포맷 대신, 파이썬 공식 표준 스펙인 **PEP 621** 기반의 `pyproject.toml`을 기본으로 사용합니다. 빌드 백엔드로는 가볍고 현대적인 `hatchling`을 권장합니다.
 
 ```toml
-[tool.poetry]
+[project]
 name = "kiwoom-rest-trade"
 version = "0.1.0"
 description = "키움증권 신형 REST/WebSocket API 비동기 파이썬 SDK"
-authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
-license = "MIT"
-packages = [{include = "kiwoom"}]
-
-[tool.poetry.dependencies]
-python = "^3.10"
-httpx = {extras = ["http2"], version = "^0.27.0"}
-websockets = "^12.0"
-pydantic = "^2.6.0"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.0.0"
-pytest-asyncio = "^0.23.0"
-ruff = "^0.2.0"
-mypy = "^1.8.0"
-black = "^24.1.0"  # 필요 시 추가 사용
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+dependencies = [
+    "httpx[http2]>=0.27.0",
+    "websockets>=12.0",
+    "pydantic>=2.6.0",
+]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# 개발용 의존성 정의 (uv 전용 dependency-groups 또는 기본 optional-dependencies)
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.2.0",
+    "mypy>=1.8.0",
+]
 
 # Ruff 설정 (린터 & 포맷터)
 [tool.ruff]
 target-version = "py310"
 line-length = 100
+
+[tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
@@ -84,7 +96,6 @@ select = [
     "B",   # flake8-bugbear (잠재적 버그)
     "RUF", # Ruff 고유 규칙
 ]
-ignore = []
 
 # Mypy 설정 (타입 체크)
 [tool.mypy]
@@ -105,33 +116,29 @@ testpaths = ["tests"]
 
 ## 4. 품질 관리 및 린트 검사 방법
 
-코드를 작성하거나 자동 생성한 뒤, 빌드/커밋 전 품질 도구를 실행하여 코드 일관성을 유지합니다.
+`uv`를 사용하면 가상환경 내에 설치된 실행 도구들을 `uv run`을 통해 격리되어 안전하고 빠르게 실행할 수 있습니다.
 
 ### 4.1. 린트 및 임포트 정리 (Ruff)
-Ruff를 이용해 정적 분석 및 임포트 자동 정렬을 수행합니다.
 ```bash
 # 코드 검사 및 자동 수정(Auto-fix)
-poetry run ruff check . --fix
+uv run ruff check . --fix
 
-# 코드 포맷팅 검사
-poetry run ruff format .
+# 코드 포맷팅
+uv run ruff format .
 ```
 
 ### 4.2. 정적 타입 검사 (Mypy)
-패키지 모듈에 대해 완벽한 타입 안전성을 유지하는지 검사합니다.
 ```bash
-poetry run mypy kiwoom
+uv run mypy kiwoom
 ```
 
 ---
 
 ## 5. 테스트 환경 및 검증 전략 (Testing)
 
-모의(Mock) 통신 환경을 구축하여 키움 실서버 없이도 테스트가 가능하도록 비동기 Mock 테스트 체계를 구성합니다.
-
 ### 5.1. 유닛 테스트 실행
 ```bash
-poetry run pytest
+uv run pytest
 ```
 
 ### 5.2. 비동기 테스트 기본 예시 (`tests/test_client.py`)
@@ -141,9 +148,7 @@ from kiwoom import AsyncKiwoomClient
 
 @pytest.mark.asyncio
 async def test_get_balance(mock_kiwoom_server):
-    # Mock 서버 컨텍스트 하에서 동작 테스트
     client = AsyncKiwoomClient(appkey="test_key", secretkey="test_secret")
-    # API 요청
     balance = await client.domestic.get_balance(acnt_no="1234567890")
     
     assert balance.acnt_no == "1234567890"
