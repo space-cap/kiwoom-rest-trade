@@ -1,0 +1,65 @@
+# ==========================================
+# kiwoom-rest-trade 프로젝트 맞춤형 .gitignore
+# ==========================================
+
+# 1. 파이썬 컴파일 및 빌드 부산물
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 2. 파이썬 가상환경 (uv / poetry / venv)
+.venv/
+venv/
+ENV/
+env/
+active_env/
+
+# 3. 개발 도구 및 린터 캐시 (Ruff, Mypy, Pytest)
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# 4. 환경 변수 및 보안 키 파일 (사용자의 App Key 등 노출 방지)
+.env
+.env.*
+secrets.json
+*.key
+
+# 5. OS 및 시스템 자동 생성 파일
+.DS_Store
+Thumbs.db
+db.sqlite3
+db.sqlite3-journal
+
+# 6. IDE 설정 파일 (사용자 로컬 세팅 유지)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
