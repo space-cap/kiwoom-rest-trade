@@ -12,6 +12,7 @@ from kiwoom.exceptions import KiwoomAuthError
 # 공통 모의 Request 객체
 MOCK_REQUEST = httpx.Request("POST", "https://api.kiwoom.com/oauth2/token")
 
+
 @pytest.mark.asyncio
 async def test_token_caching_and_expiry() -> None:
     """최초 토큰 발급 후 캐싱 및 유효 기간 내 동일 토큰 반환을 검증합니다."""
@@ -20,7 +21,7 @@ async def test_token_caching_and_expiry() -> None:
     mock_response = httpx.Response(
         status_code=200,
         json={"access_token": "cached_token_123", "expires_in": 3600},
-        request=MOCK_REQUEST
+        request=MOCK_REQUEST,
     )
 
     with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
@@ -36,6 +37,7 @@ async def test_token_caching_and_expiry() -> None:
         assert token2 == "cached_token_123"
         assert mock_post.call_count == 1  # 여전히 1회
 
+
 @pytest.mark.asyncio
 async def test_token_auto_refresh_on_expiry() -> None:
     """토큰 만료 임박 시 자동으로 갱신 API를 호출하는지 검증합니다."""
@@ -48,7 +50,7 @@ async def test_token_auto_refresh_on_expiry() -> None:
     mock_response = httpx.Response(
         status_code=200,
         json={"access_token": "new_refreshed_token", "expires_in": 3600},
-        request=MOCK_REQUEST
+        request=MOCK_REQUEST,
     )
 
     with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
@@ -58,6 +60,7 @@ async def test_token_auto_refresh_on_expiry() -> None:
         token = await manager.get_valid_token()
         assert token == "new_refreshed_token"
         assert mock_post.call_count == 1
+
 
 @pytest.mark.asyncio
 async def test_token_lock_prevents_duplicate_calls() -> None:
@@ -70,7 +73,7 @@ async def test_token_lock_prevents_duplicate_calls() -> None:
         return httpx.Response(
             status_code=200,
             json={"access_token": "single_refreshed_token", "expires_in": 3600},
-            request=MOCK_REQUEST
+            request=MOCK_REQUEST,
         )
 
     with patch("httpx.AsyncClient.post", new=slow_post):
@@ -84,7 +87,7 @@ async def test_token_lock_prevents_duplicate_calls() -> None:
                 manager.get_valid_token(),
                 manager.get_valid_token(),
                 manager.get_valid_token(),
-                manager.get_valid_token()
+                manager.get_valid_token(),
             )
 
             # 모든 코루틴이 동일한 새로운 토큰을 얻었는지 검증
@@ -93,6 +96,7 @@ async def test_token_lock_prevents_duplicate_calls() -> None:
 
             # 동시 호출임에도 불구하고 API 호출 횟수는 단 1회여야 함
             assert mock_count_post.call_count == 1
+
 
 @pytest.mark.asyncio
 async def test_token_failure_exception() -> None:
@@ -103,7 +107,7 @@ async def test_token_failure_exception() -> None:
     mock_response = httpx.Response(
         status_code=200,
         json={"err_code": "8001", "err_msg": "App Key 인증 실패"},
-        request=MOCK_REQUEST
+        request=MOCK_REQUEST,
     )
 
     with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
