@@ -15,13 +15,13 @@ def get_api_names(api_id: str) -> tuple[str, str]:
 
 def generate():
     csv_path = Path("data/kiwoom_api_index.csv")
-    md_path = Path("docs/API_LIST.md")
+    md_path = Path("docs/05_API_LIST.md")
     
     # 디렉토리 생성 보장
     md_path.parent.mkdir(parents=True, exist_ok=True)
 
     lines = [
-        "# 키움증권 REST API 매핑 및 지원 목록 (API_LIST.md)\n",
+        "# 키움증권 REST API 매핑 및 지원 목록 (05_API_LIST.md)\n",
         "본 문서는 `kiwoom-rest-trade` SDK가 지원하는 전체 **337개 API**와 파이썬 메서드 간의 1대1 매핑 인덱스 가이드입니다.\n",
         "| 대분류 | 중분류 | 키움 API ID | 파이썬 호출 메서드 | API 기능명 | HTTP 요청 |",
         "|---|---|---|---|---|---|"

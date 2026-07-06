@@ -1,4 +1,4 @@
-# 키움증권 REST API 매핑 및 지원 목록 (API_LIST.md)
+# 키움증권 REST API 매핑 및 지원 목록 (05_API_LIST.md)
 
 본 문서는 `kiwoom-rest-trade` SDK가 지원하는 전체 **337개 API**와 파이썬 메서드 간의 1대1 매핑 인덱스 가이드입니다.
 
