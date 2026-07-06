@@ -15,7 +15,7 @@ flowchart LR
     Parser -->|2. API 함수 템플릿 적용| APIs[kiwoom/api/..]
 ```
 
-1. **스펙 파일 로드**: `docs/kiwoom_api_spec.json` 파일을 파싱하여 메모리에 로드합니다.
+1. **스펙 파일 로드**: `data/kiwoom_api_spec.json` 파일을 파싱하여 메모리에 로드합니다.
 2. **카테고리별 분류**: `category_large` 필드를 기준으로 국내주식(`domestic`), 미국주식(`overseas`), 인증(`auth`)으로 분류합니다.
 3. **Pydantic 모델 생성**: 각 TR의 `request.body` 및 `response.body` 명세를 기반으로 `kiwoom/models/` 폴더에 검증 클래스를 생성합니다.
 4. **API 메서드 코드 생성**: 각 TR의 HTTP Method, URL, Header, Body 구조를 조합하여 `kiwoom/api/` 폴더에 비동기 메서드를 생성합니다.
@@ -100,7 +100,7 @@ import json
 from pathlib import Path
 
 def load_spec():
-    with open("docs/kiwoom_api_spec.json", encoding="utf-8") as f:
+    with open("data/kiwoom_api_spec.json", encoding="utf-8") as f:
         return json.load(f)
 
 def clean_desc(desc):
