@@ -110,6 +110,10 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+
+# Hatch 빌드 대상 패키지 경로 명시
+[tool.hatch.build.targets.wheel]
+packages = ["kiwoom"]
 ```
 
 ---
